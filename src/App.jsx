@@ -4,6 +4,8 @@ const App = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [isHovering, setIsHovering] = useState(false)
   const [activeButton, setActiveButton] = useState(null)
+  const [scrollRevealed, setScrollRevealed] = useState(0) // Track which models are revealed by scroll
+  const designSectionRef = useRef(null)
   
   // Geometric design states
   const [geometricMousePosition, setGeometricMousePosition] = useState({ x: 0, y: 0 })
@@ -143,6 +145,51 @@ const App = () => {
   const handleOrbitalMouseLeave = () => {
     setOrbitalMousePosition({ x: 0, y: 0 })
   }
+
+  // Scroll detection for sequential model reveal
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!designSectionRef.current) return
+      
+      const sectionTop = designSectionRef.current.offsetTop
+      const sectionHeight = designSectionRef.current.offsetHeight
+      const scrollPosition = window.scrollY + window.innerHeight
+      const sectionBottom = sectionTop + sectionHeight
+      
+      // Only trigger if we're in the design section area and no button is active
+      if (scrollPosition > sectionTop && scrollPosition < sectionBottom && activeButton === null) {
+        const scrollProgress = (scrollPosition - sectionTop) / sectionHeight
+        
+        if (scrollProgress > 0.2 && scrollRevealed < 1) {
+          setScrollRevealed(1)
+        } else if (scrollProgress > 0.5 && scrollRevealed < 2) {
+          setScrollRevealed(2)
+        } else if (scrollProgress > 0.8 && scrollRevealed < 3) {
+          setScrollRevealed(3)
+        }
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [scrollRevealed, activeButton])
+
+  // Reset scroll reveal when button is clicked
+  useEffect(() => {
+    if (activeButton !== null) {
+      setScrollRevealed(0)
+    }
+  }, [activeButton])
+
+  // Determine which model should be visible
+  const getVisibleModel = () => {
+    if (activeButton !== null) {
+      return activeButton // Button click takes priority
+    }
+    return scrollRevealed // Otherwise use scroll reveal
+  }
+
+  const visibleModel = getVisibleModel()
 
   return (
     <>
@@ -304,7 +351,7 @@ const App = () => {
       </section>
 
       {/* Content and Geometric Design Section */}
-      <section className="w-full pt-0 pb-16 px-8 bg-gray-100 relative">
+      <section className="w-full pt-12 pb-16 px-8 bg-gray-100 relative">
         <style>{`
           @keyframes dashLoop {
             0% {
@@ -332,12 +379,13 @@ const App = () => {
               stroke-dashoffset: 14;
             }
           }
+          
         `}</style>
         
         {/* Container for left and right halves */}
         <div className="w-full flex">
           {/* Left Side - Content Design */}
-          <div className="w-1/2 flex items-center justify-center px-12 pt-0 pb-16" style={{ transform: 'translateY(-190px)' }}>
+          <div className="w-1/2 flex items-center justify-center px-12 pt-8 pb-16">
             <div className="max-w-lg">
               <h2 className="text-5xl md:text-6xl font-bold mb-6 text-gray-900 leading-tight">
                 Fast, familiar, frictionless
@@ -388,25 +436,36 @@ const App = () => {
             </div>
           </div>
           
-          {/* Right Side - Geometric Design */}
+          {/* Right Side - Geometric Designs */}
           <div 
-            className={`w-1/2 relative transition-all duration-500 ease-out ${
-              activeButton === 1 ? 'ring-4 ring-gray-400 shadow-2xl' : ''
-            }`}
-            style={{ 
-              backgroundColor: '#fefefe', 
-              marginRight: '-30px',
-              transform: activeButton === 1 ? 'scale(1.1)' : 'scale(1)',
-              zIndex: activeButton === 1 ? 10 : 1
-            }}
+            ref={designSectionRef}
+            className="w-1/2 relative" 
+            style={{ marginRight: '-30px', minHeight: '600px' }}
           >
-            {/* First Design - Geometric Squares */}
-            <div 
-              ref={geometricContainerRef}
-              className="w-full h-[600px] flex items-center justify-center overflow-hidden relative"
-              onMouseMove={handleGeometricMouseMove}
-              onMouseLeave={handleGeometricMouseLeave}
-            >
+            {/* Stacked Container for all designs */}
+            <div className="relative w-full" style={{ height: '600px' }}>
+              {/* First Design - Geometric Squares */}
+              <div 
+                className={`absolute inset-0 transition-all duration-700 ease-out ${
+                  activeButton === 1 ? 'ring-4 ring-gray-400 shadow-2xl' : ''
+                }`}
+                style={{ 
+                  backgroundColor: '#fefefe',
+                  opacity: visibleModel === 1 ? 1 : 0,
+                  transform: visibleModel === 1 
+                    ? (activeButton === 1 ? 'scale(1.05) translateZ(0)' : 'scale(1) translateZ(0)')
+                    : 'scale(0.95) translateZ(0)',
+                  zIndex: visibleModel === 1 ? (activeButton === 1 ? 30 : 20) : 1,
+                  pointerEvents: visibleModel === 1 ? 'auto' : 'none',
+                  willChange: 'transform, opacity'
+                }}
+              >
+              <div 
+                ref={geometricContainerRef}
+                className="w-full h-[600px] flex items-center justify-center overflow-hidden relative"
+                onMouseMove={handleGeometricMouseMove}
+                onMouseLeave={handleGeometricMouseLeave}
+              >
               {/* Subtle dot grid background */}
               <div 
                 className="absolute inset-0 pointer-events-none" 
@@ -426,11 +485,6 @@ const App = () => {
               {/* Top label */}
               <div className="absolute top-12 right-12 text-xs font-mono text-gray-800 tracking-wider pointer-events-none">
                 // 001
-              </div>
-
-              {/* Bottom label */}
-              <div className="absolute bottom-12 left-12 text-xs font-mono text-gray-800 tracking-wider pointer-events-none">
-                // PERFORMANCE
               </div>
 
               {/* Main container - ALL elements follow mouse cursor */}
@@ -609,18 +663,31 @@ const App = () => {
                   />
                 </svg>
               </div>
+              </div>
             </div>
 
-            {/* Second Design - Orbital Circles */}
-            <div 
-              ref={orbitalContainerRef}
-              className="w-full h-[600px] flex items-center justify-center overflow-hidden relative"
-              style={{
-                backgroundColor: '#fefefe'
-              }}
-              onMouseMove={handleOrbitalMouseMove}
-              onMouseLeave={handleOrbitalMouseLeave}
-            >
+              {/* Second Design - Orbital Circles */}
+              <div 
+                className={`absolute inset-0 transition-all duration-700 ease-out ${
+                  activeButton === 2 ? 'ring-4 ring-gray-400 shadow-2xl' : ''
+                }`}
+                style={{ 
+                  backgroundColor: '#fefefe',
+                  opacity: visibleModel === 2 ? 1 : 0,
+                  transform: visibleModel === 2 
+                    ? (activeButton === 2 ? 'scale(1.05) translateZ(0)' : 'scale(1) translateZ(0)')
+                    : 'scale(0.95) translateZ(0)',
+                  zIndex: visibleModel === 2 ? (activeButton === 2 ? 30 : 20) : 1,
+                  pointerEvents: visibleModel === 2 ? 'auto' : 'none',
+                  willChange: 'transform, opacity'
+                }}
+              >
+              <div 
+                ref={orbitalContainerRef}
+                className="w-full h-[600px] flex items-center justify-center overflow-hidden relative"
+                onMouseMove={handleOrbitalMouseMove}
+                onMouseLeave={handleOrbitalMouseLeave}
+              >
               {/* Subtle dot grid background */}
               <div 
                 className="absolute inset-0 pointer-events-none" 
@@ -630,6 +697,17 @@ const App = () => {
                   backgroundPosition: '0 0'
                 }} 
               />
+
+              {/* Corner brackets */}
+              <div className="absolute top-8 left-8 w-12 h-12 border-black pointer-events-none" style={{ borderLeftWidth: '0.5px', borderTopWidth: '0.5px' }} />
+              <div className="absolute top-8 right-8 w-12 h-12 border-black pointer-events-none" style={{ borderRightWidth: '0.5px', borderTopWidth: '0.5px' }} />
+              <div className="absolute bottom-8 left-8 w-12 h-12 border-black pointer-events-none" style={{ borderLeftWidth: '0.5px', borderBottomWidth: '0.5px' }} />
+              <div className="absolute bottom-8 right-8 w-12 h-12 border-black pointer-events-none" style={{ borderRightWidth: '0.5px', borderBottomWidth: '0.5px' }} />
+
+              {/* Bottom label */}
+              <div className="absolute bottom-12 left-12 text-xs font-mono text-gray-800 tracking-wider pointer-events-none">
+                // PERFORMANCE
+              </div>
 
               {/* Main container for concentric circles */}
               <div 
@@ -772,6 +850,176 @@ const App = () => {
                     }}
                   />
                 </svg>
+              </div>
+              </div>
+            </div>
+
+              {/* Third Design - Translucent Sphere with Wireframe */}
+              <div 
+                className={`absolute inset-0 transition-all duration-700 ease-out ${
+                  activeButton === 3 ? 'ring-4 ring-gray-400 shadow-2xl' : ''
+                }`}
+                style={{ 
+                  backgroundColor: '#ffffff',
+                  opacity: visibleModel === 3 ? 1 : 0,
+                  transform: visibleModel === 3 
+                    ? (activeButton === 3 ? 'scale(1.05) translateZ(0)' : 'scale(1) translateZ(0)')
+                    : 'scale(0.95) translateZ(0)',
+                  zIndex: visibleModel === 3 ? (activeButton === 3 ? 30 : 20) : 1,
+                  pointerEvents: visibleModel === 3 ? 'auto' : 'none',
+                  willChange: 'transform, opacity'
+                }}
+              >
+              <div className="w-full h-[600px] flex items-center justify-center overflow-hidden relative">
+                {/* Subtle dot grid background */}
+                <div 
+                  className="absolute inset-0 pointer-events-none" 
+                  style={{
+                    backgroundImage: 'radial-gradient(circle, rgba(42, 42, 42, 0.15) 1px, transparent 1px)',
+                    backgroundSize: '20px 20px',
+                    backgroundPosition: '0 0'
+                  }} 
+                />
+
+                {/* Corner brackets */}
+                <div className="absolute top-8 left-8 w-12 h-12 border-black pointer-events-none" style={{ borderLeftWidth: '0.5px', borderTopWidth: '0.5px' }} />
+                <div className="absolute top-8 right-8 w-12 h-12 border-black pointer-events-none" style={{ borderRightWidth: '0.5px', borderTopWidth: '0.5px' }} />
+                <div className="absolute bottom-8 left-8 w-12 h-12 border-black pointer-events-none" style={{ borderLeftWidth: '0.5px', borderBottomWidth: '0.5px' }} />
+                <div className="absolute bottom-8 right-8 w-12 h-12 border-black pointer-events-none" style={{ borderRightWidth: '0.5px', borderBottomWidth: '0.5px' }} />
+
+                {/* Text labels */}
+                <div className="absolute top-12 right-12 text-xs font-mono text-gray-800 tracking-wider pointer-events-none">
+                  // 003
+                </div>
+                <div className="absolute bottom-12 left-12 text-xs font-mono text-gray-800 tracking-wider pointer-events-none">
+                  // COMMUNITY
+                </div>
+
+                {/* Main sphere design */}
+                <svg 
+                  width="400"
+                  height="400"
+                  viewBox="0 0 400 400"
+                  style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: '50%',
+                    transform: 'translate(-50%, -50%)'
+                  }}
+                >
+                  <defs>
+                    {/* Radial gradient for translucent sphere - pink/magenta center to blue/lavender edges */}
+                    <radialGradient id="sphereGradient" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stopColor="#FFB6E1" stopOpacity="0.8" />
+                      <stop offset="30%" stopColor="#FF9ECF" stopOpacity="0.7" />
+                      <stop offset="60%" stopColor="#E6B8FF" stopOpacity="0.6" />
+                      <stop offset="100%" stopColor="#B8D4FF" stopOpacity="0.5" />
+                    </radialGradient>
+                    
+                    {/* Mask for dashed lines to appear on sphere surface */}
+                    <mask id="sphereMask">
+                      <circle cx="200" cy="200" r="180" fill="white" />
+                    </mask>
+                  </defs>
+
+                  {/* Main translucent sphere */}
+                  <circle
+                    cx="200"
+                    cy="200"
+                    r="180"
+                    fill="url(#sphereGradient)"
+                    stroke="#000000"
+                    strokeWidth="1.5"
+                    opacity="0.9"
+                  />
+
+                  {/* Wireframe dashed lines - horizontal equator */}
+                  <ellipse
+                    cx="200"
+                    cy="200"
+                    rx="180"
+                    ry="60"
+                    fill="none"
+                    stroke="#000000"
+                    strokeWidth="1"
+                    strokeDasharray="8 6"
+                    strokeDashoffset="0"
+                    mask="url(#sphereMask)"
+                  >
+                    <animate
+                      attributeName="stroke-dashoffset"
+                      values="0;14"
+                      dur="0.6s"
+                      repeatCount="indefinite"
+                    />
+                  </ellipse>
+
+                  {/* Wireframe dashed lines - vertical prime meridian */}
+                  <ellipse
+                    cx="200"
+                    cy="200"
+                    rx="60"
+                    ry="180"
+                    fill="none"
+                    stroke="#000000"
+                    strokeWidth="1"
+                    strokeDasharray="8 6"
+                    strokeDashoffset="0"
+                    mask="url(#sphereMask)"
+                  >
+                    <animate
+                      attributeName="stroke-dashoffset"
+                      values="0;-14"
+                      dur="0.75s"
+                      repeatCount="indefinite"
+                    />
+                  </ellipse>
+
+                  {/* Wireframe dashed lines - diagonal X pattern (first diagonal) */}
+                  <ellipse
+                    cx="200"
+                    cy="200"
+                    rx="180"
+                    ry="60"
+                    fill="none"
+                    stroke="#000000"
+                    strokeWidth="1"
+                    strokeDasharray="8 6"
+                    strokeDashoffset="0"
+                    transform="rotate(45 200 200)"
+                    mask="url(#sphereMask)"
+                  >
+                    <animate
+                      attributeName="stroke-dashoffset"
+                      values="0;14"
+                      dur="0.9s"
+                      repeatCount="indefinite"
+                    />
+                  </ellipse>
+
+                  {/* Wireframe dashed lines - diagonal X pattern (second diagonal) */}
+                  <ellipse
+                    cx="200"
+                    cy="200"
+                    rx="180"
+                    ry="60"
+                    fill="none"
+                    stroke="#000000"
+                    strokeWidth="1"
+                    strokeDasharray="8 6"
+                    strokeDashoffset="0"
+                    transform="rotate(-45 200 200)"
+                    mask="url(#sphereMask)"
+                  >
+                    <animate
+                      attributeName="stroke-dashoffset"
+                      values="0;-14"
+                      dur="1s"
+                      repeatCount="indefinite"
+                    />
+                  </ellipse>
+                </svg>
+              </div>
               </div>
             </div>
           </div>
