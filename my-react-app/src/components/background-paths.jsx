@@ -68,7 +68,7 @@ export function BackgroundPaths({
           transition={{ duration: 2 }}
           className="mx-auto max-w-4xl"
         >
-          <h1 className="mb-8 text-4xl font-semibold tracking-tight text-[#1D0C46] sm:text-5xl md:text-6xl">
+          <h1 className="mb-8 text-[2rem] font-medium tracking-[0.03em] leading-tight text-[#241B4B] sm:text-[2.5rem] md:text-[3rem]">
             {words.map((word, wordIndex) => (
               <span key={wordIndex} className="mr-2 inline-block last:mr-0">
                 {word.split('').map((letter, letterIndex) => (
@@ -82,7 +82,7 @@ export function BackgroundPaths({
                       stiffness: 150,
                       damping: 25,
                     }}
-                    className="inline-block bg-gradient-to-r from-[#1D0C46] to-[#4B57AA] bg-clip-text text-transparent"
+                    className="inline-block text-inherit"
                   >
                     {letter}
                   </motion.span>
