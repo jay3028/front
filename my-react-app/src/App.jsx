@@ -2,13 +2,14 @@ import { useState } from 'react'
 import './App.css'
 import LogoIcon from './assets/Icon Only - Purple.svg'
 import { BackgroundPaths } from '@/components/background-paths'
+import Footer from './components/Footer'
 
 function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-[#F9F9F9] via-[#F5F6FD] to-[#E6EAFF]">
-      <header className="sticky top-0 z-20 border-b border-white/40 bg-gradient-to-r from-white/80 via-[#F5F6FD]/80 to-[#E6EAFF]/80 backdrop-blur-md">
+      <header className="sticky top-0 z-20">
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:px-6 md:py-4">
           {/* Left: Nav links (desktop) */}
           <div className="hidden items-center gap-8 text-sm font-medium text-[#5C4A82] md:flex">
@@ -58,7 +59,7 @@ function App() {
 
         {/* Mobile menu panel */}
         {isMobileMenuOpen && (
-          <div className="border-t border-white/60 bg-white/90 px-4 py-3 text-sm font-medium text-[#5C4A82] backdrop-blur-md md:hidden">
+          <div className="px-4 py-3 text-sm font-medium text-[#5C4A82] md:hidden">
             <div className="flex flex-col gap-3">
               <button className="inline-flex items-center justify-between hover:text-[#1D0C46]">
                 <span>Products</span>
@@ -77,6 +78,7 @@ function App() {
       </header>
 
       <BackgroundPaths />
+      <Footer />
     </div>
   )
 }

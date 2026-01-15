@@ -68,7 +68,7 @@ export function BackgroundPaths({
           transition={{ duration: 2 }}
           className="mx-auto max-w-4xl"
         >
-          <h1 className="mb-8 text-[2rem] font-medium tracking-[0.03em] leading-tight text-[#241B4B] sm:text-[2.5rem] md:text-[3rem]">
+          <h1 className="mb-8 -mt-32 text-[2rem] font-medium tracking-[0.03em] leading-tight text-[#241B4B] sm:text-[2.5rem] md:text-[3rem]">
             {words.map((word, wordIndex) => (
               <span key={wordIndex} className="mr-2 inline-block last:mr-0">
                 {word.split('').map((letter, letterIndex) => (
@@ -94,10 +94,10 @@ export function BackgroundPaths({
             ))}
           </h1>
 
-          <div className="group relative inline-block overflow-hidden rounded-2xl bg-gradient-to-b from-black/10 to-white/10 p-px shadow-lg backdrop-blur-lg transition-shadow duration-300 hover:shadow-xl">
+          <div className="group relative inline-block overflow-hidden rounded-none bg-gradient-to-b from-black/10 to-white/10 p-px shadow-lg backdrop-blur-lg transition-shadow duration-300 hover:shadow-xl">
             <Button
               variant="ghost"
-              className="rounded-[1.15rem] border border-black/10 bg-white/95 px-8 py-6 text-lg font-semibold text-black shadow-sm backdrop-blur-md transition-all duration-300 hover:bg-white group-hover:-translate-y-0.5"
+              className="rounded-none border border-black/10 bg-white/95 px-8 py-6 text-lg font-semibold text-black shadow-sm backdrop-blur-md transition-all duration-300 hover:bg-white group-hover:-translate-y-0.5"
             >
               <span className="transition-opacity opacity-90 group-hover:opacity-100">
                 Discover Excellence
