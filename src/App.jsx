@@ -89,394 +89,91 @@ function App() {
 
   const worldMapDots = generateWorldMapDots();
 
+  // Blockchain/Network names
+  const chainNames = [
+    'Ethereum', 'Sepolia', 'Holesky', 'Hoodi', 'BNB Smart Chain', 'Polygon',
+    'Base', 'Arbitrum', 'Arbitrum Nova', 'Linea', 'Blast', 'OP',
+    'Avalanche', 'BitTorrent Chain', 'Celo', 'Fraxtal', 'Gnosis', 'Mantle',
+    'Memecore', 'Moonbeam', 'Moonriver', 'Moonbase Alpha', 'opBNB', 'Scroll',
+    'Taiko', 'XDC', 'ApeChain', 'World', 'Sonic', 'Unichain',
+    'Abstract', 'Berachain', 'Swellchain'
+  ];
+
+  // Extend chainNames if needed for row 3 (14 blocks)
+  const extendedChainNames = chainNames.length >= 39 ? chainNames : 
+    [...chainNames, ...chainNames.slice(0, 39 - chainNames.length)];
+
+  // Helper function to create a pill element
+  const createPill = (name, icon = null, isSoneium = false) => (
+    <div key={name} className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
+      {isSoneium ? (
+        <div className="w-6 h-6 flex-shrink-0">
+          <svg viewBox="0 0 24 24" fill="none" className="w-full h-full">
+            <circle cx="12" cy="12" r="11" fill="#6366f1"/>
+            <path d="M8 10C8 8 9 7 11 7C13 7 14 8 14 10V14C14 16 13 17 11 17C9 17 8 16 8 14" stroke="white" strokeWidth="1.8" strokeLinecap="round" fill="none"/>
+            <path d="M11 7V17" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+          </svg>
+        </div>
+      ) : (
+        <div className="w-5 h-5 flex-shrink-0">
+          <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+            <path d="M12 8v8M8 12h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+        </div>
+      )}
+      <span className={`text-sm ${isSoneium ? 'font-semibold text-gray-800' : 'font-medium text-gray-700'} whitespace-nowrap`}>{name}</span>
+    </div>
+  );
+
+  // Distribute names across rows (keeping Soneium first in row 1)
+  // Row 1: 13 blocks (Soneium + 12 more), Row 2: 13 blocks, Row 3: 14 blocks
+  const row1Names = ['Soneium', ...extendedChainNames.slice(0, 12)];
+  const row2Names = extendedChainNames.slice(12, 25);
+  const row3Names = extendedChainNames.slice(25, 39);
+
   return (
     <div className="min-h-screen bg-white flex items-center justify-center">
-      <div className="border-2 border-gray-700 rounded-none w-[600px] h-[400px] relative overflow-hidden">
+      <div className="border-0 rounded-none w-[600px] h-[400px] relative overflow-hidden">
         {/* Text Content - Top Left */}
-        <div className="absolute top-1 left-6 right-6 z-10">
+        <div className="absolute top-1 left-4 right-6 z-10">
           <h1 className="text-3xl md:text-4xl font-bold text-black mb-4 leading-tight">
-            Deploy in seconds.
+            Track Across Chains.
           </h1>
           <p className="text-[11px] md:text-xs text-gray-900 leading-relaxed">
-            With our blazing fast, state of the art, cutting edge,<br />
-            we are so back cloud servies (read AWS) - you can<br />
-            deploy your model in seconds.
+            With Cryptique, track user behavior not just on your dapps<br />
+            but those across chains and platforms all in one place,<br />
+            in seconds
           </p>
         </div>
 
-        {/* Pill-shaped Containers - Continuous Scroll Row */}
-        <div className="absolute top-[48%] left-0 right-0 -translate-y-1/2 z-10 overflow-hidden">
+        {/* Pill-shaped Containers - Row 1 (Left to Right) */}
+        <div className="absolute top-[48%] left-0 right-0 -translate-y-1/2 z-10 overflow-hidden pause-on-hover">
           <div className="flex items-center gap-3 animate-scroll-pills-right">
-            {/* First set of pills */}
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M12 8v8M8 12h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Your Brand</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M9 9h6v6H9z" fill="currentColor"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Features</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
-                  <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Solutions</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Support</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <path d="M20 7h-4M4 7h4m12 0v10M8 7v10m12 0h-4M8 17H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Pricing</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" strokeWidth="2"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Resources</span>
-            </div>
-
-            {/* Duplicate set for seamless loop */}
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M12 8v8M8 12h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Your Brand</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M9 9h6v6H9z" fill="currentColor"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Features</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
-                  <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Solutions</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Support</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <path d="M20 7h-4M4 7h4m12 0v10M8 7v10m12 0h-4M8 17H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Pricing</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" strokeWidth="2"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Resources</span>
-            </div>
+            {[...row1Names, ...row1Names].map((name, idx) => 
+              createPill(name, null, idx % row1Names.length === 0)
+            )}
           </div>
         </div>
 
-        {/* Pill-shaped Containers - Continuous Scroll Row (Right to Left) */}
-        <div className="absolute top-[63%] left-0 right-0 -translate-y-1/2 z-10 overflow-hidden">
+        {/* Pill-shaped Containers - Row 2 (Right to Left) */}
+        <div className="absolute top-[63%] left-0 right-0 -translate-y-1/2 z-10 overflow-hidden pause-on-hover">
           <div className="flex items-center gap-3 animate-scroll-pills-left">
-            {/* First set of pills */}
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M12 8v8M8 12h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Your Brand</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M9 9h6v6H9z" fill="currentColor"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Features</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
-                  <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Solutions</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Support</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <path d="M20 7h-4M4 7h4m12 0v10M8 7v10m12 0h-4M8 17H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Pricing</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" strokeWidth="2"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Resources</span>
-            </div>
-
-            {/* Duplicate set for seamless loop */}
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M12 8v8M8 12h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Your Brand</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M9 9h6v6H9z" fill="currentColor"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Features</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
-                  <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Solutions</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Support</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <path d="M20 7h-4M4 7h4m12 0v10M8 7v10m12 0h-4M8 17H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Pricing</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" strokeWidth="2"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Resources</span>
-            </div>
+            {[...row2Names, ...row2Names].map((name) => createPill(name))}
           </div>
         </div>
 
-        {/* Pill-shaped Containers - Continuous Scroll Row (Left to Right) - Third Row */}
-        <div className="absolute top-[78%] left-0 right-0 -translate-y-1/2 z-10 overflow-hidden">
+        {/* Pill-shaped Containers - Row 3 (Left to Right) */}
+        <div className="absolute top-[78%] left-0 right-0 -translate-y-1/2 z-10 overflow-hidden pause-on-hover">
           <div className="flex items-center gap-3 animate-scroll-pills-right">
-            {/* First set of pills */}
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M12 8v8M8 12h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Your Brand</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M9 9h6v6H9z" fill="currentColor"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Features</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
-                  <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Solutions</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Support</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <path d="M20 7h-4M4 7h4m12 0v10M8 7v10m12 0h-4M8 17H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Pricing</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" strokeWidth="2"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Resources</span>
-            </div>
-
-            {/* Duplicate set for seamless loop */}
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M12 8v8M8 12h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Your Brand</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M9 9h6v6H9z" fill="currentColor"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Features</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
-                  <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Solutions</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Support</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <path d="M20 7h-4M4 7h4m12 0v10M8 7v10m12 0h-4M8 17H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Pricing</span>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-full px-4 py-2.5 shadow-sm flex items-center gap-3 flex-shrink-0">
-              <div className="w-5 h-5 flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-gray-700">
-                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" strokeWidth="2"/>
-                </svg>
-              </div>
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">Resources</span>
-            </div>
+            {[...row3Names, ...row3Names].map((name) => createPill(name))}
           </div>
         </div>
 
         {/* Solid black circle in bottom-right corner with world map pattern */}
-        <div className="absolute bottom-0 right-0 w-80 h-80 translate-x-[20%] translate-y-[20%]">
+        <div className="absolute bottom-0 right-0 w-80 h-80 translate-x-[20%] translate-y-[20%] drop-shadow-2xl">
           <div className="w-full h-full animate-rotate-anticlockwise">
-            <svg viewBox="0 0 256 256" className="w-full h-full">
+            <svg viewBox="0 0 256 256" className="w-full h-full" style={{ filter: 'drop-shadow(0 0 20px rgba(0, 0, 0, 0.5))' }}>
             {/* Black circle background */}
             <circle cx="128" cy="128" r="128" fill="black" />
             

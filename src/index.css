@@ -139,4 +139,12 @@
   .animate-scroll-pills-left {
     animation: scroll-pills-left 15s linear infinite;
   }
+
+  .pause-on-hover:hover {
+    animation-play-state: paused !important;
+  }
+
+  .pause-on-hover:hover > * {
+    animation-play-state: paused !important;
+  }
 }
